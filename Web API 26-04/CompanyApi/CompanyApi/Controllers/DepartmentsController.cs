@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CompanyApi.Models;
 
 namespace CompanyApi.Controllers
 {
-    public class DepartmentsController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class DepartmentsController : ControllerBase
     {
         private readonly CompanyDbContext _context;
 
@@ -18,145 +20,112 @@ namespace CompanyApi.Controllers
             _context = context;
         }
 
-        // GET: Departments
-        public async Task<IActionResult> Index()
+        // GET: api/Departments
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<DepartmentDTO>>> GetDepartments()
         {
-              return _context.Departments != null ? 
-                          View(await _context.Departments.ToListAsync()) :
-                          Problem("Entity set 'CompanyDbContext.Departments'  is null.");
+          if (_context.Departments == null)
+          {
+              return NotFound();
+          }
+            return await _context.Departments.Select(e => DepartmentToDTO(e)).ToListAsync();
         }
 
-        // GET: Departments/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: api/Departments/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<DepartmentDTO>> GetDepartment(int id)
         {
-            if (id == null || _context.Departments == null)
-            {
-                return NotFound();
-            }
+          if (_context.Departments == null)
+          {
+              return NotFound();
+          }
+            var department = await _context.Departments.FindAsync(id);
 
-            var department = await _context.Departments
-                .FirstOrDefaultAsync(m => m.DepartmentId == id);
             if (department == null)
             {
                 return NotFound();
             }
 
-            return View(department);
+            return DepartmentToDTO(department);
         }
 
-        // GET: Departments/Create
-        public IActionResult Create()
+        // PUT: api/Departments/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutDepartment(int id, DepartmentDTO departmentDTO)
         {
-            return View();
-        }
-
-        // POST: Departments/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DepartmentId,Name")] Department department)
-        {
-            if (ModelState.IsValid)
+            if (id != departmentDTO.DepartmentId)
             {
-                _context.Add(department);
+                return BadRequest();
+            }
+
+            _context.Entry(DTOToDepartment(departmentDTO)).State = EntityState.Modified;
+
+            try
+            {
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
             }
-            return View(department);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!DepartmentExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
-        // GET: Departments/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Departments == null)
-            {
-                return NotFound();
-            }
-
-            var department = await _context.Departments.FindAsync(id);
-            if (department == null)
-            {
-                return NotFound();
-            }
-            return View(department);
-        }
-
-        // POST: Departments/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: api/Departments
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DepartmentId,Name")] Department department)
+        public async Task<ActionResult<DepartmentDTO>> PostDepartment(DepartmentDTO departmentDTO)
         {
-            if (id != department.DepartmentId)
-            {
-                return NotFound();
-            }
+          if (_context.Departments == null)
+          {
+              return Problem("Entity set 'CompanyDbContext.Departments'  is null.");
+          }
+            _context.Departments.Add(DTOToDepartment(departmentDTO));
+            await _context.SaveChangesAsync();
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(department);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DepartmentExists(department.DepartmentId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(department);
+            return CreatedAtAction("GetDepartment", new { id = departmentDTO.DepartmentId }, departmentDTO);
         }
 
-        // GET: Departments/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // DELETE: api/Departments/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteDepartment(int id)
         {
-            if (id == null || _context.Departments == null)
-            {
-                return NotFound();
-            }
-
-            var department = await _context.Departments
-                .FirstOrDefaultAsync(m => m.DepartmentId == id);
+            var department = await _context.Departments.FindAsync(id);
             if (department == null)
             {
                 return NotFound();
             }
 
-            return View(department);
-        }
-
-        // POST: Departments/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Departments == null)
-            {
-                return Problem("Entity set 'CompanyDbContext.Departments'  is null.");
-            }
-            var department = await _context.Departments.FindAsync(id);
-            if (department != null)
-            {
-                _context.Departments.Remove(department);
-            }
-            
+            _context.Departments.Remove(department);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return NoContent();
         }
 
         private bool DepartmentExists(int id)
         {
-          return (_context.Departments?.Any(e => e.DepartmentId == id)).GetValueOrDefault();
+            return (_context.Departments?.Any(e => e.DepartmentId == id)).GetValueOrDefault();
         }
+
+        private static DepartmentDTO DepartmentToDTO(Department department) => new DepartmentDTO
+        {
+
+            DepartmentId = department.DepartmentId,
+            Name = department.Name
+        };
+        private static Department DTOToDepartment(DepartmentDTO departmentDTO) => new Department
+        {
+            DepartmentId = departmentDTO.DepartmentId,
+            Name = departmentDTO.Name
+        };
     }
 }

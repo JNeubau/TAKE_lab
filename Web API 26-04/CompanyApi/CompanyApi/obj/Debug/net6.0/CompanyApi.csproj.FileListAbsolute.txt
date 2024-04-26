@@ -261,8 +261,6 @@ C:\Users\neuba\Documents\semestr8\Technologie enterprice\laby\TAKE_lab\Web API 2
 C:\Users\neuba\Documents\semestr8\Technologie enterprice\laby\TAKE_lab\Web API 26-04\CompanyApi\CompanyApi\obj\Debug\net6.0\CompanyApi.csproj.CoreCompileInputs.cache
 C:\Users\neuba\Documents\semestr8\Technologie enterprice\laby\TAKE_lab\Web API 26-04\CompanyApi\CompanyApi\obj\Debug\net6.0\CompanyApi.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\neuba\Documents\semestr8\Technologie enterprice\laby\TAKE_lab\Web API 26-04\CompanyApi\CompanyApi\obj\Debug\net6.0\CompanyApi.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\neuba\Documents\semestr8\Technologie enterprice\laby\TAKE_lab\Web API 26-04\CompanyApi\CompanyApi\obj\Debug\net6.0\CompanyApi.RazorAssemblyInfo.cache
-C:\Users\neuba\Documents\semestr8\Technologie enterprice\laby\TAKE_lab\Web API 26-04\CompanyApi\CompanyApi\obj\Debug\net6.0\CompanyApi.RazorAssemblyInfo.cs
 C:\Users\neuba\Documents\semestr8\Technologie enterprice\laby\TAKE_lab\Web API 26-04\CompanyApi\CompanyApi\obj\Debug\net6.0\CompanyApi.sourcelink.json
 C:\Users\neuba\Documents\semestr8\Technologie enterprice\laby\TAKE_lab\Web API 26-04\CompanyApi\CompanyApi\obj\Debug\net6.0\staticwebassets.build.json
 C:\Users\neuba\Documents\semestr8\Technologie enterprice\laby\TAKE_lab\Web API 26-04\CompanyApi\CompanyApi\obj\Debug\net6.0\staticwebassets.development.json
