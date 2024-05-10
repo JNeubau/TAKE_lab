@@ -61,6 +61,7 @@ public class Booking {
 
     public LocalDate getToDate() {
         return fromDate.plusDays(numDays);
+        return fromDate.plusDays(numDays);
     }
 
     public void setToDate(LocalDate toDate) {
