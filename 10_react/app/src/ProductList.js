@@ -2,13 +2,12 @@ import './App.css';
 import React, {useState,useEffect} from 'react';
 import axios from 'axios';
 
-import List from '@mui/material/List';
-import Box from '@mui/material/Box';
-import { ListItem } from '@mui/material';
+import { List, ListItem, TextField, Box, FormLabel } from '@mui/material';
 
 function ProductList() {
 
   const [products, setProducts] = useState([]);
+  const [filter, setFilter] = useState('');
 
   // const data = [{id: 1, title: "iPhone 14", brand: "Apple"},
   //   {id: 2, title: "iPad Air", brand: "Apple"},
@@ -29,10 +28,16 @@ function ProductList() {
   return (
     <div className="container-fluid">
       <h1>List of products</h1>
+      <Box>
+        <FormLabel>Filter by product title: </FormLabel>
+        <TextField type="text" value={filter} onChange={e => setFilter(e.target.value)}></TextField>
+      </Box>
       <Box sx={{ width: '100%', bgcolor: '#f5d6c9' }}>
         <List component="nav" aria-label="main mailbox folders">
           <ul>
-            {products.map((product => (
+            {products
+            .filter(product => product.title.toUpperCase().includes(filter.toUpperCase()))
+            .map((product => (
               <ProductItem key={product.id} title={product.title} brand={product.brand}/>
             )))}
           </ul>
