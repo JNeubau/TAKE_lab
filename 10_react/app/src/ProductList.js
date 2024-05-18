@@ -1,28 +1,18 @@
 import './App.css';
-import React, {useState,useEffect} from 'react';
-import axios from 'axios';
+import React, {useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import { List, ListItem, TextField, Box, FormLabel } from '@mui/material';
 
-function ProductList() {
+function ProductList({products}) {
 
-  const [products, setProducts] = useState([]);
   const [filter, setFilter] = useState('');
 
-  // const data = [{id: 1, title: "iPhone 14", brand: "Apple"},
-  //   {id: 2, title: "iPad Air", brand: "Apple"},
-  //   {id: 3, title: "Galaxy A51", brand: "Samsung"}]
-
-  useEffect(() => {
-    axios.get('https://dummyjson.com/products')
-      .then(response => {
-        const products = response.data.products;
-        setProducts(products);
-      }).catch(error => console.error("There was an error!", error));
-  }, []);
-
-  function ProductItem({title, brand }) {
-    return <ListItem alignItems="flex-start">{title} ({brand})</ListItem>;
+  function ProductItem({id, title, brand }) {
+    return (
+    <ListItem alignItems="flex-start">
+        <Link to={`/details/${id}`}>{title}</Link> ({brand})
+      </ListItem>);
   }
 
   return (
@@ -32,13 +22,13 @@ function ProductList() {
         <FormLabel>Filter by product title: </FormLabel>
         <TextField type="text" value={filter} onChange={e => setFilter(e.target.value)}></TextField>
       </Box>
-      <Box sx={{ width: '100%', bgcolor: '#f5d6c9' }}>
+      <Box sx={{ maxWidth: '100%', marginLeft: '10px', marginRight: '10px', bgcolor: '#f5d6c9', border: 1, borderTop: 0, borderColor: 'white', borderRadius: '16px' }}>
         <List component="nav" aria-label="main mailbox folders">
           <ul>
             {products
             .filter(product => product.title.toUpperCase().includes(filter.toUpperCase()))
             .map((product => (
-              <ProductItem key={product.id} title={product.title} brand={product.brand}/>
+              <ProductItem key={product.id} id={product.id} title={product.title} brand={product.brand}/>
             )))}
           </ul>
         </List>
